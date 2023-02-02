@@ -1,0 +1,18 @@
+# For name generation fake data.
+faker==16.6.1
+
+# [code_style]-[BEGIN]
+# Pre-commit hook.
+pre-commit==3.0.3
+# Upgrade syntax.
+pyupgrade == 3.3.1
+# Formatter. Apply codestyle.
+black==23.1.0
+# Check codestyle.
+flake8 == 6.0.0
+# Removes unused imports and unused variables.
+autoflake==2.0.1
+# For making requests
+requests == 2.28.2
+# Data structures for data analysis, time series, and statistics
+pandas == 1.5.3
