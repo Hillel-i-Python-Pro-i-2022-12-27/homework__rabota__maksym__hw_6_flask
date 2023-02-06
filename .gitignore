@@ -168,5 +168,5 @@ files_input/*
 files_output/*
 !files_output/.gitkeep
 
-special_folder/*
-!special_folder/.gitkeep
+bd/*
+!db/.gitkeep
