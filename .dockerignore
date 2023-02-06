@@ -3,5 +3,5 @@
 
 # Exclude
 !application
-!app.py.py
+!app.py
 !requirements.txt
