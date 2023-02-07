@@ -21,10 +21,11 @@ def hello():  # put application's code here
         "<p><a href='./space'>SPACE</a></p>"
         "<p><a href='./mean'>MEAN</a></p>"
         "<br><h1>URL REQUESTS:</h1>"
-        "<li>/contacts/create?contact_name=***&phone=***    >>> create row in phone book by contact_name and phone</li>"
+        "<li>/contacts/create?contact_name=*input_name*&phone_value=*input_number*  "
+        "  >>> create row in phone book by contact_name and phone_value</li>"
         "<li>/contacts/read-all    >>> show all phone book by Primary Key</li>"
         "<li>/contacts/read/<int>    >>> show phone book by Primary Key</li>"
-        "<li>/contacts/update/<int>?contact_name=&phone=    >>> update phone book row by Primary Key</li>"
+        "<li>/contacts/update/search_key?contact_name=&phone_value=   >>> update phone book row by Primary Key</li>"
         "<li>/contacts/delete/<int>    >>> delete phone book row by Primary Key</li>"
     )
 
@@ -64,13 +65,13 @@ def average() -> str:
 
 
 @app.route("/contacts/create")
-@use_args({"contact_name": fields.Str(required=True), "phone": fields.Str(required=True)}, location="query")
+@use_args({"contact_name": fields.Str(required=True), "phone_value": fields.Int(required=True)}, location="query")
 def create_contacts(args):
     with DBConnection() as connection:
         with connection:
             connection.execute(
-                "INSERT INTO phones (contact_name, phone) VALUES (:contact_name, :phone);",
-                {"contact_name": args["contact_name"], "phone": args["phone"]},
+                "INSERT INTO phones (contact_name, phone_value) VALUES (:contact_name, :phone_value);",
+                {"contact_name": args["contact_name"], "phone_value": args["phone_value"]},
             )
     return "Success!"
 
@@ -79,19 +80,19 @@ def create_contacts(args):
 def contacts__read__all():
     with DBConnection() as connection:
         table_ = connection.execute("SELECT * FROM phones;").fetchall()
-        return "<br>".join([f'{row_["pk"]}. {row_["contact_name"]} - {row_["phone"]}' for row_ in table_])
+        return "<br>".join([f'{row_["pk"]}. {row_["contact_name"]} - {row_["phone_value"]}' for row_ in table_])
 
 
 @app.route("/contacts/read/<int:pk>")
 def contact__read(pk: int):
     with DBConnection() as connection:
         table_ = connection.execute(
-            "SELECT * " "FROM phones " "WHERE (pk=:pk);",
+            "SELECT * FROM phones WHERE (pk=:pk);",
             {
                 "pk": pk,
             },
-        ).fetchall()
-    return f'{table_["pk"]}.{table_["contact_name"]} - {table_["phone"]}'
+        ).fetchone()
+    return f'{table_["pk"]}: {table_["contact_name"]} - {table_["phone_value"]}'
 
 
 @app.route("/contacts/update/<int:pk>")
@@ -100,16 +101,17 @@ def contacts__update(args, pk: int):
     with DBConnection() as connection:
         with connection:
             contact_name = args.get("contact_name")
-            phone = args.get("phone")
+            phone_value = args.get("phone_value")
 
-            if contact_name is None and phone is None:
+            if contact_name is None and phone_value is None:
                 return Response("You need to provide any argument to update the contact!", status=400)
+
             args_for_request = []
             if contact_name is not None:
                 args_for_request.append("contact_name=:contact_name")
 
-            if phone is not None:
-                args_for_request.append("phone=:phone")
+            if phone_value is not None:
+                args_for_request.append("phone_value=:phone_value")
 
             answer = ", ".join(args_for_request)
 
@@ -118,7 +120,7 @@ def contacts__update(args, pk: int):
                 {
                     "pk": pk,
                     "contact_name": contact_name,
-                    "phone": phone,
+                    "phone_value": phone_value,
                 },
             )
     return "Success!"
@@ -129,7 +131,7 @@ def contacts__delete(pk: int):
     with DBConnection() as connection:
         with connection:
             connection.execute(
-                "DELETE " "FORM phones " "WHERE (pk=:pk);",
+                "DELETE " "FROM phones " "WHERE (pk=:pk);",
                 {
                     "pk": pk,
                 },

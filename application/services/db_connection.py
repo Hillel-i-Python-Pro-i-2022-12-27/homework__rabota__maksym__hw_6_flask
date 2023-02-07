@@ -5,7 +5,7 @@ from application.settings import DB_PATH
 
 class DBConnection:
     def __init__(self):
-        self._connection: sqlite3.Connection | None = None
+        self._connection: sqlite3.Connection
 
     def __enter__(self):
         self._connection = sqlite3.connect(DB_PATH)
