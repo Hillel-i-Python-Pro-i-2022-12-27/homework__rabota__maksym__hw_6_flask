@@ -65,7 +65,7 @@ def average() -> str:
 
 
 @app.route("/contacts/create")
-@use_args({"contact_name": fields.Str(required=True), "phone_value": fields.Int(required=True)}, location="query")
+@use_args({"contact_name": fields.Str(required=True), "phone_value": fields.Str(required=True)}, location="query")
 def create_contacts(args):
     with DBConnection() as connection:
         with connection:
@@ -96,7 +96,7 @@ def contact__read(pk: int):
 
 
 @app.route("/contacts/update/<int:pk>")
-@use_args({"contact_name": fields.Str(), "phone": fields.Str()}, location="query")
+@use_args({"contact_name": fields.Str(), "phone_value": fields.Str()}, location="query")
 def contacts__update(args, pk: int):
     with DBConnection() as connection:
         with connection:
@@ -109,10 +109,8 @@ def contacts__update(args, pk: int):
             args_for_request = []
             if contact_name is not None:
                 args_for_request.append("contact_name=:contact_name")
-
             if phone_value is not None:
                 args_for_request.append("phone_value=:phone_value")
-
             answer = ", ".join(args_for_request)
 
             connection.execute(
