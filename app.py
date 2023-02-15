@@ -1,10 +1,11 @@
+import pathlib
 from flask import Flask, Response
 from webargs import fields
 from webargs.flaskparser import use_args
 
 from application.astronauts.amount_of_astronauts import astronauts
 from application.average.avarage_params import average_params
-from application.get_content.read_file import actions_with_file
+from application.config.paths import FILES_OUTPUT_PATH
 from application.services.create_table import create_table
 from application.services.db_connection import DBConnection
 from application.users_generator.users_generator import users_from_json_file
@@ -31,17 +32,16 @@ def hello():  # put application's code here
 
 
 @app.route("/get_content")
-def get_content(file=actions_with_file()):
-    with open(file) as data:
+def get_content(file="some_txt_file.txt"):
+    file_path = pathlib.Path(FILES_OUTPUT_PATH, file)
+    with file_path.open() as data:
         content = data.read()
     return f"<h1>GET CONTENT</h1>" f"{content}" f"<br><a href='/'>←BACK</a>"
 
 
 @app.route("/generate-users")
 def generate_users(data=users_from_json_file()):
-    content: str = ""
-    for users in data:
-        content += f"<p>{users['name']} : {users['email']}<p>"
+    content = "\n".join([f"<p>{users['name']} : {users['email']}</p>" for users in data])
     return f"<h1>GENERATE USERS</h1>" f"{content}" f"<a href='/'>←BACK</a>"
 
 
@@ -92,7 +92,9 @@ def contact__read(pk: int):
                 "pk": pk,
             },
         ).fetchone()
-    return f'{table_["pk"]}: {table_["contact_name"]} - {table_["phone_value"]}'
+        if not table_:
+            return "No such contact"
+        return f'{table_["pk"]}: {table_["contact_name"]} - {table_["phone_value"]}' f"<p><a href='/'>\n←BACK</a></p>"
 
 
 @app.route("/contacts/update/<int:pk>")

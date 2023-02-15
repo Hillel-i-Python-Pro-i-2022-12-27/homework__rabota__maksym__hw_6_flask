@@ -2,7 +2,9 @@
 flask==2.2.2
 webargs==8.2.0
 # For name generation fake data.
-faker==16.6.1
+faker==17.0.0
+
+pathlib==1.0.1
 
 # [code_style]-[BEGIN]
 # Pre-commit hook.
