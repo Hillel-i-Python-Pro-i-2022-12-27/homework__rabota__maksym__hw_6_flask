@@ -3,5 +3,6 @@
 
 # Exclude
 !application
+!db
 !app.py
 !requirements.txt
