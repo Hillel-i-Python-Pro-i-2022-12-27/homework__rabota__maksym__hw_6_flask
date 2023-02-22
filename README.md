@@ -1,4 +1,4 @@
-📝Homework 6: Flask application
+📝Homework 7: Flask application + CRUD
 
 ▶️Run
 Run homework without docker.
