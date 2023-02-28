@@ -167,6 +167,7 @@ files_input/*
 
 files_output/*
 !files_output/.gitkeep
+!files_output/hw.csv
 
 bd/*
 !db/.gitkeep
